@@ -1,9 +1,10 @@
 <div align="center">
   <h1>gomine</h1>
-  <h2> Minecraft Protocol implementation in Go </h2>
-  <h3> This is a continuation of [go-mcproto](https://github.com/BRA1L0R/go-mcproto/) by [BRA1L0R](https://github.com/BRA1L0R). </h3>
+  <h3> Minecraft Protocol implementation in Go </h3>
   <a href="http://github.com/heywinit/gomine"><img src="https://img.shields.io/github/go-mod/go-version/heywinit/gomine"></a>
 </div>
+
+This is a continuation of [go-mcproto](https://github.com/BRA1L0R/go-mcproto/) by [BRA1L0R](https://github.com/BRA1L0R)
 
 ## Install
 ```sh
@@ -38,11 +39,11 @@ Fortunately, defining a packet with go-gomine is as easy as declaring a struct. 
 
 ```go
 type ChatMessage struct {
-  packets.MinecraftPacket
+packets.MinecraftPacket
 
-  JsonData string `mc:"string"`
-  Position byte   `mc:"inherit"`
-  Sender   []byte `mc:"bytes" len:"16"` // UUID is 128bit, hence the 16 byte len
+JsonData string `mc:"string"`
+Position byte   `mc:"inherit"`
+Sender   []byte `mc:"bytes" len:"16"` // UUID is 128bit, hence the 16 byte len
 }
 ```
 
@@ -56,14 +57,14 @@ Sometimes you might encounter a packet that sends before an array the length of 
 
 ```go
 type Biome struct {
-  BiomeID int32 `mc:"varint"`
+BiomeID int32 `mc:"varint"`
 }
 
 type ChunkData struct {
-  packets.MinecraftPacket
+packets.MinecraftPacket
 
-  BiomesLength int32   `mc:"varint"`
-  Biomes       []Biome `mc:"array" len:"BiomesLength"`
+BiomesLength int32   `mc:"varint"`
+Biomes       []Biome `mc:"array" len:"BiomesLength"`
 }
 ```
 
@@ -75,10 +76,10 @@ In some cases, a field is present only if the previous one is true (in the case 
 
 ```go
 type PlayerInfo struct {
-  packets.MinecraftPacket
+packets.MinecraftPacket
 
-  HasDisplayName bool   `mc:"inherit"`
-  DisplayName    string `mc:"string" depends_on:"HasDisplayName"`
+HasDisplayName bool   `mc:"inherit"`
+DisplayName    string `mc:"string" depends_on:"HasDisplayName"`
 }
 ```
 
@@ -122,14 +123,14 @@ Receiving a packet is done by calling `client.ReceivePacket`. The server will re
 ```go
 packet, err := client.ReceivePacket()
 if err != nil {
-  // an error has been encountered during the reception of the packet
-  panic(err)
+// an error has been encountered during the reception of the packet
+panic(err)
 }
 
 keepalive := new(models.KeepAlivePacket)
 err := packet.DeserializeData(keepalive)
 if err != nil {
-  panic(err)
+panic(err)
 }
 
 fmt.Println(keepalive.KeepAliveID) // 123456
@@ -143,15 +144,15 @@ Here's a practical demonstration:
 
 ```go
 type FixedContent struct {
-  packets.MinecraftPacket
+packets.MinecraftPacket
 
-  PacketType int32 `mc:"varint"`
+PacketType int32 `mc:"varint"`
 }
 
 type SomeOtherContent struct {
-  packets.MinecraftPacket
+packets.MinecraftPacket
 
-  Data string `mc:"string"`
+Data string `mc:"string"`
 }
 
 packet, _ := client.ReceivePacket()
@@ -162,10 +163,10 @@ fixedPacket := new(FixedContent)
 packet.DeserializeData(fixedPacket)
 
 if fixedPacket.PacketType == 0x05 {
-  someOtherContent := new(SomeOtherContent)
-  packet.DeserializeData(someOtherContent)
+someOtherContent := new(SomeOtherContent)
+packet.DeserializeData(someOtherContent)
 } else {
-  panic("Unknown packet type!")
+panic("Unknown packet type!")
 }
 ```
 
@@ -182,28 +183,28 @@ import (
 )
 
 func main() {
-  client := gomine.Client{}
+	client := gomine.Client{}
 	client.Initialize("127.0.0.1", 25565, 755, "GolangBot")
 
-  for {
-    packet, err := client.ReceivePacket()
-    if err != nil {
-      panic(err)
-    }
+	for {
+		packet, err := client.ReceivePacket()
+		if err != nil {
+			panic(err)
+		}
 
-    if packet.PacketID == 0x1F { // clientbound keepalive packetid
-      receivedKeepalive := new(models.KeepAlivePacket)
-      err := packet.DeserializeData(receivedKeepalive)
-      if err != nil {
-        panic(err)
-      }
+		if packet.PacketID == 0x1F { // clientbound keepalive packetid
+			receivedKeepalive := new(models.KeepAlivePacket)
+			err := packet.DeserializeData(receivedKeepalive)
+			if err != nil {
+				panic(err)
+			}
 
-      serverBoundKeepalive := new(models.KeepAlivePacket)
-      serverBoundKeepalive.KeepAliveID = receivedKeepalive.KeepAliveID
-      serverBoundKeepalive.PacketID = 0x10 // serverbound keepaliveid
+			serverBoundKeepalive := new(models.KeepAlivePacket)
+			serverBoundKeepalive.KeepAliveID = receivedKeepalive.KeepAliveID
+			serverBoundKeepalive.PacketID = 0x10 // serverbound keepaliveid
 
-      err = client.WritePacket(serverBoundKeepalive)
-    }
-  }
+			err = client.WritePacket(serverBoundKeepalive)
+		}
+	}
 }
 ```
