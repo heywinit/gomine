@@ -1,4 +1,4 @@
-package mcproto
+package gomine
 
 import (
 	"net"
@@ -11,7 +11,7 @@ type Client struct {
 	//
 	// automatically set by the Client.Initialize method, so if you are using this method
 	// to open up the connection between the server and the client you must not modify it
-	CompressionTreshold int32
+	CompressionThreshold int32
 
 	// read mutex to make the reading of packets thread safe
 	readMu sync.Mutex
@@ -23,7 +23,7 @@ type Client struct {
 }
 
 func (client *Client) IsCompressionEnabled() bool {
-	return client.CompressionTreshold > 0
+	return client.CompressionThreshold > 0
 }
 
 func (client *Client) GetRemoteAddress() net.TCPAddr {

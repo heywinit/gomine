@@ -6,13 +6,12 @@ import (
 	"strconv"
 )
 
-var ErrInvalidLen = errors.New("mcproto: invalid len tag")
+var ErrInvalidLen = errors.New("gomine: invalid len tag")
 
-// checkDependency
+// CheckDependency
 //
 // returns false either if the dependency has not been found
 // or the dependency was not met
-//
 // returns true if the dependency has been found AND it's true
 func CheckDependency(inter reflect.Value, field reflect.StructField) bool {
 	depend := field.Tag.Get("depends_on")

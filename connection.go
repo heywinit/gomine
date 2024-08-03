@@ -1,9 +1,11 @@
-package mcproto
+package gomine
 
-import "net"
+import (
+	"net"
+)
 
 // FromListener accepts the connection from a net.Listener and uses it as the
-// underlying connection for packet comunication between the server and the client
+// underlying connection for packet communication between the server and the client
 func FromListener(ln *net.TCPListener) (client *Client, err error) {
 	client = new(Client)
 	client.connection, err = ln.AcceptTCP()
@@ -11,7 +13,7 @@ func FromListener(ln *net.TCPListener) (client *Client, err error) {
 	return
 }
 
-// CloseConnection closes the underlying connection making further comunication impossible
-func (mc *Client) CloseConnection() error {
-	return mc.connection.Close()
+// CloseConnection closes the underlying connection making further communication impossible
+func (client *Client) CloseConnection() error {
+	return client.connection.Close()
 }

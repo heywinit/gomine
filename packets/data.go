@@ -5,14 +5,14 @@ import (
 	"errors"
 	"reflect"
 
-	"github.com/BRA1L0R/go-mcproto/packets/serialization"
+	"github.com/heywinit/gomine/packets/serialization"
 )
 
 func getReflectValue(inter interface{}) (val reflect.Value, err error) {
 	v := reflect.ValueOf(inter)
 
 	if v.Kind() != reflect.Ptr {
-		err = errors.New("mcproto: inter should be a pointer to an interface")
+		err = errors.New("gomine: inter should be a pointer to an interface")
 		return
 	}
 

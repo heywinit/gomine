@@ -4,14 +4,13 @@ import (
 	"bytes"
 	"compress/zlib"
 	"errors"
+	"github.com/heywinit/gomine/varint"
 	"io"
-
-	"github.com/BRA1L0R/go-mcproto/varint"
 )
 
 var (
 	maxPacketLength    = 2097151 // https://wiki.vg/Protocol#Packet_format
-	ErrMaxPacketLength = errors.New("mcproto: counterpart sent a packet which was too big")
+	ErrMaxPacketLength = errors.New("gomine: counterpart sent a packet which was too big")
 )
 
 type MinecraftRawPacket struct {
@@ -20,7 +19,7 @@ type MinecraftRawPacket struct {
 	data         []byte
 }
 
-// NewReader opens a bytes.Buffer or zlib readcloser depending if the packet
+// NewReader opens a bytes.Buffer or zlib read closer depending on if the packet
 // is compressed or not
 func (rp *MinecraftRawPacket) NewReader() (io.ReadCloser, error) {
 	var reader io.ReadCloser
@@ -75,7 +74,7 @@ func (rp *MinecraftRawPacket) ReadAll() (packetId int32, data []byte, err error)
 	return
 }
 
-// Write compress calculates packet length and writes
+// WriteUncompressed calculates packet length and writes
 // the complete packet to writer using the uncompressed format
 func (rp *MinecraftRawPacket) WriteUncompressed(writer io.Writer) error {
 	rp.packetLength = len(rp.data)
@@ -95,7 +94,7 @@ func (rp *MinecraftRawPacket) WriteUncompressed(writer io.Writer) error {
 	return nil
 }
 
-// WriteCompressed calculates the packetlength based on the dataLength and the
+// WriteCompressed calculates the packet length based on the dataLength and the
 // dimension of the compressed/uncompressed data.
 func (rp *MinecraftRawPacket) WriteCompressed(writer io.Writer) error {
 	encDlen, encDlenLen := varint.EncodeVarInt(int32(rp.dataLength))

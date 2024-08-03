@@ -1,33 +1,28 @@
 <div align="center">
-  <h1>go-mcproto</h1>
-  <a href="https://pkg.go.dev/github.com/BRA1L0R/go-mcproto"><img src="https://pkg.go.dev/badge/github.com/BRA1L0R/go-mcproto.svg" alt="Go Reference"></a>
-  <a href="http://github.com/BRA1L0R/go-mcproto"><img src="https://img.shields.io/github/go-mod/go-version/BRA1L0R/go-mcproto"></a>
-  <a href="https://github.com/BRA1L0R/go-mcproto/actions"><img src="https://img.shields.io/github/workflow/status/BRA1L0R/go-mcproto/Test?label=Unit%20Testing"></a>
+  <h1>gomine</h1>
+  <a href="http://github.com/heywinit/gomine"><img src="https://img.shields.io/github/go-mod/go-version/heywinit/gomine"></a>
 </div>
 
 ## Install
-
-Go 1.16.x is required to use this library
-
 ```sh
-go get github.com/BRA1L0R/go-mcproto
+go get github.com/heywinit/gomine
 ```
 
 ## Opening a connection
 
 ```go
 // Define the client
-client := mcproto.Client{}
+client := gomine.Client{}
 
 // Use the Initialize method which connects to the server and sends Login information
-client.Initialize("127.0.0.1", 25565, 755, "GolangBot")
+client.Initialize("127.0.0.1", 25565, 767, "GomineBot")
 ```
 
 Before opening a connection to a server, you'll have to specify some vital information such as the host, the port,
 the name of your bot (which will login in offline mode) and the protocol version, which will have to match the server one,
 unless the server uses some kind of backward compatibility plugin such as ViaVersion.
 
-In this case, 755 is the protocol version for Minecraft 1.17 but you can find all the versions [here](https://wiki.vg/Protocol_version_numbers)
+In this case, 767 is the protocol version for Minecraft 1.21 but you can find all the versions [here](https://wiki.vg/Protocol_version_numbers)
 
 Once you define client, you can either use the already implemented handshake method (`client.Initialize`) or you can manually open the connection using `client.Connect`
 
@@ -37,7 +32,7 @@ Once you define client, you can either use the already implemented handshake met
 
 Not all packets are implemented in the library there are only the ones that will get you past the login state.
 
-Fortunately, defining a packet with go-mcproto is as easy as declaring a struct. Here's a quick example
+Fortunately, defining a packet with go-gomine is as easy as declaring a struct. Here's a quick example
 
 ```go
 type ChatMessage struct {
@@ -180,12 +175,12 @@ This example initializes the connection between the client and a server, thus sw
 package main
 
 import (
-	"github.com/BRA1L0R/go-mcproto"
-	"github.com/BRA1L0R/go-mcproto/packets/models"
+	"github.com/heywinit/gomine"
+	"github.com/heywinit/gomine/packets/models"
 )
 
 func main() {
-  client := mcproto.Client{}
+  client := gomine.Client{}
 	client.Initialize("127.0.0.1", 25565, 755, "GolangBot")
 
   for {

@@ -2,9 +2,8 @@ package types
 
 import (
 	"bytes"
+	"github.com/heywinit/gomine/varint"
 	"reflect"
-
-	"github.com/BRA1L0R/go-mcproto/varint"
 )
 
 func SerializeVarInt(field reflect.Value, databuf *bytes.Buffer) error {

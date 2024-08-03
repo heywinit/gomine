@@ -7,10 +7,10 @@ import (
 )
 
 var (
-	ErrVarIntTooBig = errors.New("mcproto: var int is too big")
+	ErrVarIntTooBig = errors.New("gomine: var int is too big")
 )
 
-// EncoeVarInt is an implementation of the varint encoding as specified on wiki.vg
+// EncodeVarInt is an implementation of the varint encoding as specified on wiki.vg
 //
 // It takes an int32 as an input, and returns the encoded varint in the form of
 // a byte slice, and also returns n which is the number of bytes the varint takes

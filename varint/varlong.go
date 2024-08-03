@@ -5,7 +5,7 @@ import (
 	"io"
 )
 
-// DecodeReaderVarInt takes an io.Reader as a parameter and returns in order:
+// DecodeReaderVarLong takes an io.Reader as a parameter and returns in order:
 //
 // - the result varlong
 //
@@ -26,7 +26,7 @@ func DecodeReaderVarLong(reader io.Reader) (result int64, numRead int, err error
 		readByte := read[0]
 
 		value := int64(readByte & 0b01111111)
-		result |= (value << (7 * numRead))
+		result |= value << (7 * numRead)
 
 		numRead++
 		if numRead > 10 {
@@ -42,7 +42,7 @@ func DecodeReaderVarLong(reader io.Reader) (result int64, numRead int, err error
 	return result, numRead, nil
 }
 
-// EncoeVarLong is an implementation of the varlong encoding as specified on wiki.vg
+// EncodeVarLong is an implementation of the varlong encoding as specified on wiki.vg
 //
 // It takes an int64 as an input, and returns the encoded varint in the form of
 // a byte slice, and also returns n which is the number of bytes the varint takes

@@ -1,10 +1,12 @@
 package models
 
-import "github.com/BRA1L0R/go-mcproto/packets"
+import (
+	"github.com/heywinit/gomine/packets"
+)
 
 type LoginStartPacket struct {
-	// *packets.UncompressedPacket
 	packets.MinecraftPacket
 
 	Name string `mc:"string"`
+	UUID []byte `mc:"bytes" len:"16"`
 }

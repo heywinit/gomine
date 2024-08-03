@@ -1,6 +1,6 @@
 package models
 
-import "github.com/BRA1L0R/go-mcproto/packets"
+import "github.com/heywinit/gomine/packets"
 
 type DisconnectPacket struct {
 	packets.MinecraftPacket

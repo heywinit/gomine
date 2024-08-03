@@ -2,9 +2,8 @@ package varint_test
 
 import (
 	"bytes"
+	"github.com/heywinit/gomine/varint"
 	"testing"
-
-	"github.com/BRA1L0R/go-mcproto/varint"
 )
 
 func TestVarInt(t *testing.T) {

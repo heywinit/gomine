@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/BRA1L0R/go-mcproto/packets/serialization/tagutils"
+	"github.com/heywinit/gomine/packets/serialization/tagutils"
 )
 
 func TestCheckDependency(t *testing.T) {

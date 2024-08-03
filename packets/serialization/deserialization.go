@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"reflect"
 
-	"github.com/BRA1L0R/go-mcproto/packets/serialization/tagutils"
-	"github.com/BRA1L0R/go-mcproto/packets/serialization/types"
+	"github.com/heywinit/gomine/packets/serialization/tagutils"
+	"github.com/heywinit/gomine/packets/serialization/types"
 )
 
 func DeserializeFields(t reflect.Value, databuf *bytes.Buffer) error {
@@ -36,7 +36,7 @@ func DeserializeFields(t reflect.Value, databuf *bytes.Buffer) error {
 		case "bytes":
 			err = types.DeserializeBytes(field, lengthTag, databuf)
 		case "nbt":
-			err = types.DeserializeNbt(field, lengthTag, databuf)
+			err = types.DeserializeNbt(field, databuf)
 		case "array":
 			err = types.DeserializeArray(field, lengthTag, databuf, DeserializeFields)
 		}

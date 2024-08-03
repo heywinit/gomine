@@ -1,9 +1,9 @@
-package mcproto
+package gomine
 
 import (
 	"io"
 
-	"github.com/BRA1L0R/go-mcproto/packets"
+	"github.com/heywinit/gomine/packets"
 )
 
 // SerializablePacket defines the standard methods that a struct should have
@@ -15,55 +15,55 @@ type SerializablePacket interface {
 	// data buffer. It can and will return an error in case of invalid data
 	SerializeData(inter interface{}) error
 
-	SerializeCompressed(writer io.Writer, compressionTreshold int) error
+	SerializeCompressed(writer io.Writer, compressionThreshold int) error
 	SerializeUncompressed(writer io.Writer) error
 }
 
 // WritePacket calls SerializeData and then calls WriteRawPacket
-func (mc *Client) WritePacket(packet SerializablePacket) error {
-	mc.writeMu.Lock()
-	defer mc.writeMu.Unlock()
+func (client *Client) WritePacket(packet SerializablePacket) error {
+	client.writeMu.Lock()
+	defer client.writeMu.Unlock()
 
 	if err := packet.SerializeData(packet); err != nil {
 		return err
 	}
 
-	if mc.IsCompressionEnabled() {
-		return packet.SerializeCompressed(mc.connection, int(mc.CompressionTreshold))
+	if client.IsCompressionEnabled() {
+		return packet.SerializeCompressed(client.connection, int(client.CompressionThreshold))
 	} else {
-		return packet.SerializeUncompressed(mc.connection)
+		return packet.SerializeUncompressed(client.connection)
 	}
 }
 
 // WriteRawPacket takes a rawpacket as input and serializes it in the connection
-func (mc *Client) WriteRawPacket(rawPacket *packets.MinecraftRawPacket) error {
-	mc.writeMu.Lock()
-	defer mc.writeMu.Unlock()
+func (client *Client) WriteRawPacket(rawPacket *packets.MinecraftRawPacket) error {
+	client.writeMu.Lock()
+	defer client.writeMu.Unlock()
 
-	if mc.IsCompressionEnabled() {
-		return rawPacket.WriteCompressed(mc.connection)
+	if client.IsCompressionEnabled() {
+		return rawPacket.WriteCompressed(client.connection)
 	} else {
-		return rawPacket.WriteUncompressed(mc.connection)
+		return rawPacket.WriteUncompressed(client.connection)
 	}
 }
 
 // ReceiveRawPacket reads a raw packet from the connection but doesn't deserialize
 // neither uncompress it
-func (mc *Client) ReceiveRawPacket() (*packets.MinecraftRawPacket, error) {
-	mc.readMu.Lock()
-	defer mc.readMu.Unlock()
+func (client *Client) ReceiveRawPacket() (*packets.MinecraftRawPacket, error) {
+	client.readMu.Lock()
+	defer client.readMu.Unlock()
 
-	if mc.IsCompressionEnabled() {
-		return packets.FromCompressedReader(mc.connection)
+	if client.IsCompressionEnabled() {
+		return packets.FromCompressedReader(client.connection)
 	} else {
-		return packets.FromUncompressedReader(mc.connection)
+		return packets.FromUncompressedReader(client.connection)
 	}
 }
 
 // ReceivePacket receives and deserializes a packet from the connection, uncompressing it
 // if necessary
-func (mc *Client) ReceivePacket() (*packets.MinecraftPacket, error) {
-	rawPacket, err := mc.ReceiveRawPacket()
+func (client *Client) ReceivePacket() (*packets.MinecraftPacket, error) {
+	rawPacket, err := client.ReceiveRawPacket()
 	if err != nil {
 		return nil, err
 	}

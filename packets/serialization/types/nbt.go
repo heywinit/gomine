@@ -8,11 +8,13 @@ import (
 )
 
 func SerializeNbt(field reflect.Value, databuf *bytes.Buffer) error {
-	return nbt.Marshal(databuf, field.Interface())
+	encoder := nbt.NewEncoder(databuf)
+
+	return encoder.Encode(field.Interface(), "")
 }
 
-func DeserializeNbt(field reflect.Value, length int, databuf *bytes.Buffer) error {
+func DeserializeNbt(field reflect.Value, databuf *bytes.Buffer) error {
 	decoder := nbt.NewDecoder(databuf)
-
-	return decoder.Decode(field.Addr().Interface())
+	_, err := decoder.Decode(field.Addr().Interface())
+	return err
 }

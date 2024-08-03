@@ -4,11 +4,10 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"github.com/heywinit/gomine"
+	"github.com/heywinit/gomine/packets"
+	"github.com/heywinit/gomine/packets/models"
 	"runtime"
-
-	"github.com/BRA1L0R/go-mcproto"
-	"github.com/BRA1L0R/go-mcproto/packets"
-	"github.com/BRA1L0R/go-mcproto/packets/models"
 )
 
 type ClientBoundChatMessage struct {
@@ -34,24 +33,20 @@ type ChatMessage struct {
 }
 
 var (
-	host     = flag.String("host", "152.89.170.123", "Server host")
+	host     = flag.String("host", "127.0.0.1", "Server host")
 	port     = flag.Uint("port", 25565, "Server port")
-	username = flag.String("username", "Golang_Keepalive", "In-game username")
+	username = flag.String("username", "Notch", "In-game username")
 )
 
 func main() {
 	flag.Parse()
 
-	client := mcproto.Client{}
-	err := client.Initialize(*host, uint16(*port), 754, *username)
+	client := gomine.Client{}
+	err := client.Initialize(*host, uint16(*port), 767, *username)
 	if err != nil {
 		panic(err)
 	}
 
-	// botInfoMessage := ServerBoundChatMessage{
-	// 	MinecraftPacket: packets.MinecraftPacket{PacketID: 0x03},
-	// 	Message:         fmt.Sprintf("I'm running on %v, %v", runtime.GOOS, runtime.GOARCH),
-	// }
 	botInfoMessage := new(ServerBoundChatMessage)
 	botInfoMessage.PacketID = 0x03
 	botInfoMessage.Message = fmt.Sprintf("I'm running on %v, %v", runtime.GOOS, runtime.GOARCH)
