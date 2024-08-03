@@ -1,5 +1,7 @@
 <div align="center">
   <h1>gomine</h1>
+  <h2> Minecraft Protocol implementation in Go </h2>
+  <h3> This is a continuation of [go-mcproto](https://github.com/BRA1L0R/go-mcproto/) by [BRA1L0R](https://github.com/BRA1L0R).
   <a href="http://github.com/heywinit/gomine"><img src="https://img.shields.io/github/go-mod/go-version/heywinit/gomine"></a>
 </div>
 
