@@ -42,7 +42,7 @@ func main() {
 	flag.Parse()
 
 	client := gomine.Client{}
-	err := client.Initialize(*host, uint16(*port), 767, *username)
+	err := client.Initialize(*host, uint16(*port), 766, *username)
 	if err != nil {
 		panic(err)
 	}

@@ -44,6 +44,17 @@ func (client *Client) Connect(host string) error {
 // username is the in-game username the client will send to the server during handshaking. Might differ from the actual
 // in-game username as the server sends a confirmation of it after the login state.
 func (client *Client) Initialize(host string, port uint16, protocolVersion int32, username string) error {
+	/*
+		This is the sequence of the packets
+		C -> S  0x00 HandshakePacket (State 2)
+		C -> S  0x00 LoginStartPacket
+		S -> C  Encryption Request, only for online mode, //todo: implement online mode support with encryption
+		S -> C  0x03 SetCompressionPacket -> then we do some compression
+		S -> C  0x02 LoginSuccessPacket
+		C -> S  0x03 LoginAcknowledgedPacket
+		S -> C  0x02 ClientBound Plugin Message //ignored
+		C -> S  0x00 ClientInformationPacket
+	*/
 	if err := client.Connect(fmt.Sprintf("%s:%v", host, port)); err != nil {
 		return err
 	}
@@ -103,35 +114,37 @@ func (client *Client) Initialize(host string, port uint16, protocolVersion int32
 
 	for {
 		p, err := client.ReceivePacket()
+		fmt.Printf("ID: 0x%x || Data: %v\n", p.PacketID, p.Data)
 		if err != nil {
 			return err
 		}
 
 		switch p.PacketID {
-		case 0x00: // disconnected
+		// disconnected
+		case 0x00:
 			disconnectPacket := new(models.DisconnectPacket)
 			if err := p.DeserializeData(disconnectPacket); err != nil {
 				return err
 			}
 
 			return &LoginDisconnectError{Reason: disconnectPacket.Reason}
-		case 0x01: // client bound plugin message, we ignore it
-			clientInfoPacket := models.ClientInformationPacket{
-				MinecraftPacket:     packets.MinecraftPacket{PacketID: 0x00},
-				Locale:              "en_US",
-				ViewDistance:        10,
-				ChatMode:            0,
-				ChatColors:          false, //todo: add a way to enable chat colors
-				DisplayedSkinParts:  0x7F,
-				MainHand:            1, //right hand
-				EnableTextFiltering: false,
-				AllowServerListings: true,
+		// packet after lock ack
+		case 0x01:
+			//send serverbound plugin message
+			//then recieve clientbound plugin message
+
+			serverboundPluginMessage := models.ServerboundPluginMessagePacket{
+				MinecraftPacket: packets.MinecraftPacket{PacketID: 0x02},
+				Channel:         "minecraft:name",
+				Data:            []byte("gomine"),
 			}
 
-			err := client.WritePacket(&clientInfoPacket)
-
-			return err
-		case 0x03: // set compression
+			err := client.WritePacket(&serverboundPluginMessage)
+			if err != nil {
+				return err
+			}
+		//set compression request,
+		case 0x03:
 			setCompression := new(models.SetCompressionPacket)
 			err := p.DeserializeData(setCompression)
 			if err != nil {
@@ -143,7 +156,8 @@ func (client *Client) Initialize(host string, port uint16, protocolVersion int32
 			}
 
 			client.CompressionThreshold = setCompression.Threshold
-		case 0x02: // login success
+		//login success -> send login ack
+		case 0x02:
 			loginSuccess := new(models.LoginSuccessPacket)
 			err := p.DeserializeData(loginSuccess)
 
@@ -160,5 +174,12 @@ func (client *Client) Initialize(host string, port uint16, protocolVersion int32
 				return err
 			}
 		}
+
 	}
+
+	//here the basic login process ends, now this is stuff like letting server know what packs we have and vice versa
+	//sequence goes like
+	//S -> C 0x0E Client bound Known Packs
+	//C -> S 0x00 Server bound Known Packs
+
 }

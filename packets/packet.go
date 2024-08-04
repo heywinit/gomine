@@ -3,7 +3,6 @@ package packets
 import (
 	"bytes"
 	"compress/zlib"
-	"fmt"
 	"github.com/heywinit/gomine/varint"
 	"io"
 )
@@ -27,10 +26,6 @@ func (p *MinecraftPacket) SerializeUncompressed(writer io.Writer) error {
 
 	packet := new(MinecraftRawPacket)
 	packet.data = append(packetId, p.Data...)
-
-	//print to console for debugging
-	fmt.Println("PacketID: ", p.PacketID)
-	fmt.Println("Data: ", p.Data)
 
 	return packet.WriteUncompressed(writer)
 }
